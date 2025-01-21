@@ -1,5 +1,6 @@
 // node --version
 // node src/index.js
+//нова гілка git checkout -b name
 
 Налаштування:
 
@@ -25,12 +26,15 @@
    "dev": "nodemon src/index.js"
    };
    запускає додаток командою npm run dev
+
+   //можна додати nodemon config ignore file в package.json або в окремий файл nodemon.json - вказуємо при зміні яких файлів перезавантажуватись не протрібно
+
 9. папка src ->
 
    - index.js
    - файл server.js //логіка роботи express-серверу;
 
-<!--  -->
+<!-- Express -->
 
 10. npm install express (**Express** - обробка запитів, роутінг(визначення маршрутів), middleware, сервіси статичних файлів, ...):
     import express from 'express';
@@ -40,9 +44,11 @@
     app.use(paths, middleware) //шлях, middleware
 12. middleware з бібліотеки **pino** - налаштовувати логгер через об’єкт властивостей.
     npm install pino-http //логер
-    npm i --save-dev pino-pretty //форматування логів
+    npm i --save-dev pino-pretty //форматування логів, в 'зрозумілому' вигляді
 
-    <!-- CORS -->
+    import pino from 'pino-http'; //логування
+
+    <!-- CORS тільки для браузера-->
 
 13. **CORS** - інструмент безпеки для веб-додатків. Налаштовуємо відповідні HTTP-заголовки, які вказують, яким джерелам дозволено отримувати доступ.
     npm i cors // встановлює пакет cors
@@ -54,3 +60,20 @@
 14. Змінні отчення **.env** - зберігання конфігураційних параметрів, схованих ключів, шляхів до файлів, налаштувань серверів та іншої конфіденційної інформації.
     !!!! .env одразу доданий в .gitignore
     13.1. .env.example - містить всі необхідні назви змінних оточення без реальних значень
+15. npm install dotenv - зчитувати та використовувати змінні оточення в додатку;
+    import 'dotenv/config'; //зчитування змінних оточення
+    або dotenv.config();
+
+    15.1. Для доступу до змінних оточення в середовищі Node.js використовується глобальний об'єкт **process.env**
+
+16. при відсутності змінної оточення, створити утилітарну функцію яка перевірятиме її наявність і генеруватиме помилку, якщо змінна не встановлена:
+    src/utils/getEnvVar.js:
+    import 'dotenv/config'; //зчитування змінних оточення
+    або dotenv.config();
+    ...
+    export function getEnvVar(name, defaultValue) {
+    const envVar = process.env[name];
+    ...
+    }
+
+<!-- MongoDB -->
