@@ -9,9 +9,9 @@ export const initMongoDBConnection = async () => {
   //mongoDB_Atlas -> Cluster -> Conect -> Drivers -> з node на mongoose -> 3.View full code sample
   try {
     //викор.змінні оточення
-    const user = getEnv(ENV_VARS.MONGODB_USER); //nataliiastupka
-    const password = getEnv(ENV_VARS.MONGODB_PASSWORD); //Werthjxrf1985
-    const domain = getEnv(ENV_VARS.MONGODB_DOMAIN); //cluster0.7cxd6.mongodb.net/
+    const user = getEnv(ENV_VARS.MONGODB_USER);
+    const password = getEnv(ENV_VARS.MONGODB_PASSWORD);
+    const domain = getEnv(ENV_VARS.MONGODB_DOMAIN);
     const db = getEnv(ENV_VARS.MONGODB_DATABASE);
 
     const conectionURI = `mongodb+srv://${user}:${password}@${domain}/${db}?retryWrites=true&w=majority&appName=Cluster0`;
