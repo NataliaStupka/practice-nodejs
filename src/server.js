@@ -1,6 +1,6 @@
 //код стосовно сервера
 
-import express from 'express'; //бібліотека для сворення серверу та роутингу
+import express from 'express'; //бібліотека для створення серверу та роутингу
 import pino from 'pino-http'; //логування
 import cors from 'cors'; //безпека
 
@@ -8,7 +8,7 @@ import { getEnv } from './utils/getEnv.js'; //значення порта зі �
 import { ENV_VARS } from './constants/env.js'; //PORT
 
 //Імпортуємо router
-import studentsRouter from './routers/students.js'; //котролери маршрутів /students та /students/:studentId
+import studentsRouter from './routers/students.js'; //контролери маршрутів /students та /students/:studentId
 
 // Імпортуємо middleware (помилки)
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
@@ -17,6 +17,11 @@ import { errorHandler } from './middlewares/errorHandler.js';
 //огорне все що відбувалось
 export const startServer = () => {
   const app = express();
+
+  //?????
+  //вбудована middleware,
+  app.use(express.json()); //Express буде автоматично парсити тіло запиту
+  //  і поміщати його в req.body, при Content-Type: application/json
 
   app.use(cors());
 
@@ -34,7 +39,7 @@ export const startServer = () => {
 
   //імпортуємо порт
   //const PORT = getEnv('PORT', 3001); //'PORT' - створемо об'єктом через constants
-  const PORT = getEnv(ENV_VARS.PORT, 3000);
+  const PORT = getEnv(ENV_VARS.PORT, 4000);
   app.listen(PORT, () => {
     //console.log(process.env); // console.log(process.env.PORT); //змінні оточення
     console.log(`Serverrr is running on port ${PORT}`);

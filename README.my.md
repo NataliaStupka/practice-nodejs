@@ -1,46 +1,101 @@
 <!-- 3 module -->
 
 <!-- рефакторінг(організація) -->
-<!-- routers, controllers, обробка err, try/catch для запитів, middleware -->
+<!-- routers, controllers, обробка err, try/catch для запитів, middleware, http-errors -->
 
-1. src/routers
-   розбиття роутів на логічні частини. (**Router**) — це об'єкт, який дозволяє групувати маршрути та їх обробники (middleware) у логічні групи.
+1.  src/routers
+    розбиття роутів на логічні частини. (**Router**) — це об'єкт, який дозволяє групувати маршрути та їх обробники (middleware) у логічні групи.
 
-   import { Router } from 'express';
+    import { Router } from 'express';
 
-   - створюємо папку src/routers;
-   - переносимо контролери, які обробляють маршрути /students та /students/:studentId із файла server.js;
-   - імпортуємо створений роутер у файл server.js та додаємо його як middleware до app, за допомогою методу app.use().
+    - створюємо папку src/routers;
+    - переносимо контролери, які обробляють маршрути /students та /students/:studentId із файла server.js;
+    - імпортуємо створений роутер у файл server.js та додаємо його як middleware до app, за допомогою методу app.use().
 
-2. src/controllers
+2.  src/controllers
 
-   - винесемо контролери, з файлу-роутингу src/routes/students.js;
-   - використовуємо котролери у роуті
+    - винесемо контролери, з файлу-роутингу src/routes/students.js;
+    - використовуємо котролери у роуті
 
-3. обробка помилок
-4. **next** - після виклику next обов’язково потрібно додати return, щоб у разі помилки припинити виконання подальшого коду у контролері.
+3.  обробка помилок
+4.  **next** - після виклику next обов’язково потрібно додати return, щоб у разі помилки припинити виконання подальшого коду у контролері.
 
-5. огорнути в src/routers функцією-обгорткою ctrlWrapper (try - catch)
-   Будь-який **запит** у базу даних обгорнути у
-   try {} catch() {}
+5.  огорнути в src/routers функцією-обгорткою ctrlWrapper (try - catch)
+    Будь-який **запит** у базу даних обгорнути у
+    try {} catch() {}
 
-   - у папці src/utils файл ctrlWrapper.js
-   - Створити допоміжну функцію-обгортку для всих запитів (уникаємо повторення коду)
+    - у папці src/utils файл ctrlWrapper.js
+    - Створити допоміжну функцію-обгортку для всих запитів (уникаємо повторення коду)
 
-6. Організація **middleware** - виносимо в окремі файли src/middlewares/
+6.  Організація **middleware** - виносимо в окремі файли src/middlewares/
 
-   - errorHandler.js //status(500)
-   - notFoundHandler.js //status(404)
-   - імпортуємо в server
+    - errorHandler.js //status(500)
+    - notFoundHandler.js //status(404)
+    - імпортуємо в server
 
-7. ПОМИЛКА пошуку студента за id (коректніше повертати помилку зі статусом 404 - Not Found)
-   Інсталюємо пакетом **http-errors**, використовуємо у файлі контролера
-   npm install http-errors
+7.  ПОМИЛКА пошуку студента за id (коректніше повертати помилку зі статусом 404 - Not Found)
+    Інсталюємо пакетом **http-errors**, використовуємо у файлі контролера
+    npm install http-errors
 
-   - src/controllers/students.js; //Створюємо та налаштовуємо помилку throw createHttpError
-   - src/middlewares/errorHandler.js
+    - src/controllers/students.js; //Створюємо та налаштовуємо помилку throw createHttpError
+    - src/middlewares/errorHandler.js
 
-   <!-- 2 module -->
+    <!-- Запити, POST, PUT, PATCH, DELETE -->
+
+8.  Обробка тіла запиту
+    у файлі server.js:
+    ////
+    import express from 'express';
+    const app = express();
+    app.use(express.json()) /Express буде автоматично парсити тіло запиту і поміщати його в req.body, при Content-Type: application/json
+    ///
+
+    Для типу application/vnd.api+json:
+    app.use(express.json({
+    type: ['application/json', 'application/vnd.api+json'],
+    limit: '', //можна додати (обмежує розмір тіла запиту)
+    }))
+
+<!-- POST -->
+
+9.  POST/students
+    **controllers - routers - services**
+    Для створення нового документа в колекції використовується метод: Model.create(doc).
+
+             doc — перший аргумент (обов’язковий), який містить дані (об'єкт або масив об'єктів)
+
+    <!-- DELETE -->
+
+10. DELETE /students/:studentId
+    **controllers - routers - services**
+    Для видалення документа з колекції в Mongoose використовується метод:
+    findOneAndDelete(filter, options, callback)
+
+    - filter - вказує на умову, за якою відбувається пошук документа для видалення. Передається як об’єкт з властивостями. Обов'язковий аргумент;
+    - options - додаткові властивості;
+    - callback - якщо не використовується async/await, можна передати функцію зворотного виклику для обробки результату операції. Необов'язковий аргумент.
+
+        <!-- PUT оновлює весь ресурс -->
+
+11. PUT /students/:studentId
+    **controllers - routers - services**
+    //метод: Model.findOneAndUpdate(query, update, options, callback) Для оновлення документа в колекції
+
+    - query - (обов’язковий) містить умови пошуку документа
+    - update - (обов’язковий) містить дані для оновлення
+    - options - (обов'язковий) об’єкт додаткових налаштувань (може бути порожнім {})
+    - callback - (необов’язковий) функція зворотного виклику для обробки результату
+
+    - new: повертає оновлений документ, якщо true
+    - upsert: створює новий документ, якщо відповідний не знайдено
+
+<!-- PATCH оновлює частину ресурсу -->
+
+12. PATCH /students/:studentId
+    **controllers - routers - services**
+
+<!-- ----------------------------------- -->
+<!-- 2 module -->
 
 **2 module**
 // node --version
@@ -165,5 +220,23 @@
       - ✅ index.js - файл, з якого буде починатися виконання нашої програми
       - ✅ server.js - файл, де ми опишемо наш express-сервер
 
-✅ - зроблено у 2 модулі
-✅ ✅ - зроблено у 3 модулі
+✅ - створено у 2 модулі
+✅ ✅ - створено у 3 модулі
+
+<!--  -->
+
+Поширені значення хедеру Content-Type(запит):
+
+    - text/plain - звичайний текст
+    - ✅ application/json - дані у форматі JSON (для відправки POST, PUT та PATCH запитів)
+    - application/xml - дані у форматі XML
+    - ✅ multipart/form-data - для передачі файлів та даних форм (для завантаження файлів)
+    - application/x-www-form-urlencoded - стандартна форма відправки даних у вебформах
+
+Основні методи, які ми будемо використовувати:
+
+    - GET: отримання інформації про ресурс (студента).
+    - POST: створення нового ресурсу або виконання операції з існуючим.
+    - PUT: повне оновлення існуючого ресурсу або створення нового.
+    - PATCH: часткове оновлення існуючого ресурсу.
+    - DELETE: видалення існуючого ресурсу.

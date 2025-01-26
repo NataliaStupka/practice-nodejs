@@ -1,5 +1,6 @@
 //код middleware обробки помилок із server.js
 
+//Імпортуємо клас HttpError для обробки помилок HTTP
 import { HttpError } from 'http-errors'; //клас HttpError для обробки помилок HTTP
 
 export const errorHandler = (err, req, res, next) => {
