@@ -1,0 +1,9 @@
+//створюємо об'єктом, а не строкою
+
+export const ENV_VARS = {
+  PORT: 'PORT',
+  MONGODB_USER: 'MONGODB_USER',
+  MONGODB_PASSWORD: 'MONGODB_PASSWORD',
+  MONGODB_DOMAIN: 'MONGODB_DOMAIN',
+  MONGODB_DATABASE: 'MONGODB_DATABASE',
+};
