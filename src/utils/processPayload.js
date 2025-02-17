@@ -4,9 +4,8 @@
 
 //якщо нічого не прийшло для firstName, secondName
 const processName = (firstName, secondName) => {
-  if (!firstName || !secondName) {
-    return firstName + ' ' + secondName;
-  }
+  if (!firstName || !secondName) return null;
+  return firstName + ' ' + secondName;
 };
 
 export const processStudentPayload = ({

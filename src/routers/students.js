@@ -18,35 +18,36 @@ import {
 } from '../validation/students.js'; //схема
 import { validateMongoId } from '../middlewares/validateMongoId.js'; //валідація id
 
-const router = Router();
+const studentsRouter = Router();
 
-router.use('/students/:studentId', validateMongoId('studentId')); //відпрацює скрізь де є шлях :studentId
+studentsRouter.use('/:studentId', validateMongoId('studentId')); //відпрацює скрізь де є шлях :studentId
 
-router.get('/students', ctrlWrapper(getStudentsController));
-router.get('/students/:studentId', ctrlWrapper(getStudentsByIdController));
+//GET
+studentsRouter.get('/', ctrlWrapper(getStudentsController));
+studentsRouter.get('/:studentId', ctrlWrapper(getStudentsByIdController));
 
 //POST
-router.post(
-  '/students',
+studentsRouter.post(
+  '/',
   validateBody(createStudentValidationSchema), //валідація
   ctrlWrapper(createStudentController),
 );
 
-//DELETE
-router.delete('/students/:studentId', ctrlWrapper(deleteStudentController));
-
 //PUT - оновлює весь ресурс (має отримати всю інформацію для створення/оновлення)
-router.put(
-  '/students/:studentId',
+studentsRouter.put(
+  '/:studentId',
   validateBody(createStudentValidationSchema), //валідація
   ctrlWrapper(upsertStudentController),
 );
 
 //PATCH - update
-router.patch(
-  '/students/:studentId',
+studentsRouter.patch(
+  '/:studentId',
   validateBody(updateStudentValidationSchema),
   ctrlWrapper(patchStudentController),
 );
 
-export default router;
+//DELETE
+studentsRouter.delete('/:studentId', ctrlWrapper(deleteStudentController));
+
+export default studentsRouter;

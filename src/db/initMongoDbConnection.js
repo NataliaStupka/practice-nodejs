@@ -16,10 +16,10 @@ export const initMongoDBConnection = async () => {
 
     const conectionURI = `mongodb+srv://${user}:${password}@${domain}/${db}?retryWrites=true&w=majority&appName=Cluster0`;
 
-    await mongoose.connect(conectionURI);
-    console.log('Conection successfully established!'); //'Підключення успішно встановлено!'
+    await mongoose.connect(conectionURI); //connect - Підключення
+    console.log('Conection successfully established! ✅'); //'Підключення успішно встановлено!'
   } catch (err) {
-    console.error('Conection issues:', err);
+    console.error('Conection issues: ❌', err);
     //process - глобальна змінна взаємодія з процесом в якому є поточ.додаток
     process.exit(1); //закінчуємо процес і виходимо з кодом 1
     //якщо код 0, то це означає що додаток відпрацював коректно. якщо не з 0 - то щось пішло не  так.

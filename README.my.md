@@ -1,4 +1,79 @@
+<!-- 4 module -->
+
+    <!-- 4 module-validation-and-pagination ============================================-->
+
+<!-- node_modules/joi/lib - index.d.ts -->
+
+1.  Validation - перевіряємо що прийшло:
+    Joi - бібліотека для валідації даних в JavaScript-середовищі, зокрема в Node.js (також підходить Formik, Yup, та інші)
+    методи Joi.object() та Joi.array()
+
+    для перевірки об'єктів даних на відповідність цій схемі.
+    методи валідації: **validate** або **validateAsync**
+    метод .messages({'string.base': ''})
+
+    { abortEarly: false } при виклику методу validate, щоб отримати всі можливі помилки валідації, а не першу з них
+
+        npm i joi
+
+        - схема валідації через joi () - створення/оновлення(put, patch) об'єкту
+          // src/validation/contact.js
+
+        - Middleware - валідація для роутів
+          // src/middlewares/validateBody.js
+
+          - validateBody(схема) - повертає middleware для валідації body запиту;
+          - isValidId - застосувати її в усіх роутах, які працюють з id студента
+
+        - додати у роути валідацію
+          // src/routers/students.js
+
+    <!--  -->
+
+2.  Пагінація:
+    2.1. Створення:
+
+        - логіка парсингу параметрів пошуку (page, perPage)
+          // src/utils/parsePaginationParams.js
+        - page, perPage додати в getStudentsController
+          // src/controllers/students.js
+        - calculatePaginationData - повертає об'єкт з повною інформацією про пагінацію
+          // src/utils/calculatePaginationData.js
+        - додати до сервісу логіку для того, щоб правильно запитувати дані з бази даних
+          // src/.../services/students.js
+
+    - .limit() - скільки хочемо повернути;
+    - .skip() - скільки пропустити/відступити
+
+3.  Сортування (utils - controllers - services): sort() в Mongoose:
+    acs ↑, desc ↓
+
+    - .sort()
+      Model.find().sort({ field1: direction1, field2: direction2, ... });
+
+    sortBy - по чому, sortOrder - порядок (ascendants)↑, (descendants)↓
+
+4.  Filter (utils - controllers - services):
+    Оператори порівняння в Mongoose:
+    - $eq = значення поля дорівнює заданому значенню;
+    - $ne != не дорівнює заданому значенню;
+    - $gt > поля більше заданого значення;
+    - $gte >= поля більше або дорівнює заданому значенню;
+    - $lt <
+    - $lte <= наприклад: ({ $lte: 8.5 });
+    - $in ({ $in: ['male', 'female'] }) поля знаходиться в заданому масиві значень;
+    - $nin поля не знаходиться в заданому масиві значень ({ gender: { $nin: ['male'] } })
+
+Приклад запиту MongoDB для фільтрації у NoSQL базі даних:
+db.students.find({ averageGrade: { $gte: 10 } });
+
+SQL-запитів:
+**Query Builder**
+await StudentModel.find().where('age').gte(6).lte(10)
+
 <!-- 3 module -->
+
+    <!-- 3 module ============================================-->
 
 <!-- рефакторінг(організація) -->
 <!-- routers, controllers, обробка err, try/catch для запитів, middleware, http-errors -->
@@ -95,7 +170,10 @@
     **controllers - routers - services**
 
 <!-- ----------------------------------- -->
+<!-- ----------------------------------- -->
 <!-- 2 module -->
+
+    <!-- 2 module ============================================-->
 
 **2 module**
 // node --version
@@ -240,3 +318,14 @@
     - PUT: повне оновлення існуючого ресурсу або створення нового.
     - PATCH: часткове оновлення існуючого ресурсу.
     - DELETE: видалення існуючого ресурсу.
+
+<!--  -->
+
+**Пагінація**, кілька загальних властивостей:
+
+    - perPage - ліміт записів на сторінці. Кількість записів чи об'єктів, які повинні бути включені на кожній сторінці;
+    - page - номер поточної сторінки, яку переглядає користувач;
+    totalItems - загальна кількість записів чи об'єктів у всьому наборі даних;
+    - totalPages - загальна кількість сторінок, яка визначається за формулою Math.ceil(totalItems / perPage);
+    - hasPreviousPage - прапор, який вказує, чи є для поточного запиту попередня сторінка;
+    - hasNextPage - прапор, який вказує, чи є для поточного запиту наступна сторінка.

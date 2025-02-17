@@ -1,4 +1,4 @@
-//код стосовно сервера
+//логіка роботи express-серверу
 
 import express from 'express'; //бібліотека для створення серверу та роутингу
 import pino from 'pino-http'; //логування
@@ -8,7 +8,7 @@ import { getEnv } from './utils/getEnv.js'; //значення порта зі �
 import { ENV_VARS } from './constants/env.js'; //PORT
 
 //Імпортуємо router
-import studentsRouter from './routers/students.js'; //контролери маршрутів /students та /students/:studentId
+import router from './routers/index.js'; //контролери маршрутів /students та /students/:studentId
 
 // Імпортуємо middleware (помилки)
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
@@ -16,7 +16,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 
 //огорне все що відбувалось
 export const startServer = () => {
-  const app = express();
+  const app = express(); //Ініціалізувати Express-додаток
 
   //?????
   //вбудована middleware,
@@ -31,7 +31,7 @@ export const startServer = () => {
     }),
   ); //логування, в 'зрозумілому' вигляді pino-pretty
 
-  app.use(studentsRouter); // Додаємо роутер до app як middleware
+  app.use(router); // Додаємо роутер до app як middleware
 
   //помилки
   app.use('*', notFoundHandler); //status(404)
@@ -42,6 +42,6 @@ export const startServer = () => {
   const PORT = getEnv(ENV_VARS.PORT, 4000);
   app.listen(PORT, () => {
     //console.log(process.env); // console.log(process.env.PORT); //змінні оточення
-    console.log(`Serverrr is running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
   });
 };
