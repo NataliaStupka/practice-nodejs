@@ -1,6 +1,80 @@
-<!-- 4 module -->
+<!-- 5 module -->
 
-    <!-- 4 module-validation-and-pagination ============================================-->
+    <!-- 5 module-auth ==========================================-->
+
+Аутентифікація в нашому додатку побудована на основі сесій
+
+1.  USER(register):
+
+    - TOKEN in const;
+    - (models/user.js) - створюємо сутність user;
+    - (validation/registerUser.js) - validation;
+    - створення:
+      - SERVICES/auth.js:
+        - register (первірка чи вільний email, хешування паролю npm i bcrypt) ;
+        - login
+        - refresh
+        - logout
+      - CONTROLLER/auth (register);
+      - ROUTERS/auth.js - authRouter;
+      - validation/registerUser.js;
+
+2.  - LOGIN, SESSION:
+    - (models/session.js) - sessionSchema
+    - SERVICES/auth.js:
+      - login (перевірили чи зареєстрований юзер, чи відповідає введений пароль зареєстрованому, видалили стару сесію/створили нову сесію);
+    - CONTROLLER/auth
+    - ROUTERS/auth.js
+    - validation/loginUser
+
+- cookies
+  Для роботи із куками **npm i cookie-parser**;
+  та використати його як middleware в src/server.js
+  метод .cookie
+
+3.  REFRESH
+    стару сесію видалити, нову створити, якщо токен вже просрочений то відправити на логінізацію
+    - controller
+    - router
+4.  LOGOUT - очищаємо cookies (лише сервер може це зробити, оскільки вони httpOnly), а також видалити сесію із бази даних:
+    - services/auth.js;
+    - controllers/auth.js
+      res.clearCookie - очищає кукі
+    - routers/auth.js;
+5.  аутентифікація
+
+    - src/middlewares/authenticate.js;
+    - в /routers/**students**.js використовуємо middleware authenticate;
+
+- в **Postman**: auth/login (беремо токен) - contact/get_all (в хедер Bearer 'вставляемо токен' ) = отримуємо контакти;
+  Authorization - Bearer 'token'(той що при auth/login) (postman/header на get запиті)
+  \*. Налаштування вставлення токену в get запит в postman: login/Scripts:
+
+  //
+  const jsonData = pm.response.json();
+  pm.environment.set('access_token', jsonData.data.accessToken)
+  //
+  Environment, Local - Variable: access_token;
+  Colections/getContact/Auth - AuthType (BearerToken), Token ({{access_token}})
+
+  //--------
+
+6.  АвторизаціяЖ
+
+    - src/validation/students.js
+      до існуючих схем validation/students.js-(createStudentSchema), db/models/student.js -(studentsSchema) додати поле parentId;
+    - constant ROLES
+    - src/db/models/user.js додаємо role
+    - middleware checkRoles;
+    - src/routers/students.js використовуємо middleware checkRoles:
+      - studentsRouter.get - корегуємо
+
+7.  - teacher мають повний доступ до всіх контактів
+    - parent - доступ тільки до свого контакту
+
+      <!-- 4 module -->
+
+          <!-- 4 module-validation-and-pagination ============================================-->
 
 <!-- node_modules/joi/lib - index.d.ts -->
 

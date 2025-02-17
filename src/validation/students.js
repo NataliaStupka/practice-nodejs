@@ -2,6 +2,7 @@
 
 import Joi from 'joi';
 import { GENDERS } from '../constants/gender.js';
+import { isValidObjectId } from 'mongoose'; //для авторизації
 
 //для об’єкта при створенні нового студента:
 //string().required().min() і т.д - патерн builder
@@ -15,6 +16,14 @@ export const createStudentValidationSchema = Joi.object({
     .required(),
   avgMark: Joi.number().min(2).max(12).required(),
   onDuty: Joi.boolean(),
+
+  //для авторизації (винести в окрему функцію)
+  parentId: Joi.string().custom((value, helper) => {
+    if (value && !isValidObjectId(value)) {
+      return helper.message('Parent id should be a valid mongo id');
+    }
+    return true;
+  }),
 });
 
 //для валідації об’єкта студента при його оновленні

@@ -10,8 +10,11 @@ const studentSchema = new Schema(
     gender: { type: String, required: true, enum: Object.values(GENDERS) },
     avgMark: { type: Number, required: true },
     onDuty: { type: Boolean, default: false, required: true },
+    //
+    parentId: { type: Schema.Types.ObjectId, ref: 'users' },
+    //parentId: { type: Types.ObjectId, ref: UserCollection, required: true },
   },
-  { timestamps: true, versionKey: false },
+  { timestamps: true, versionKey: false }, //timestamps автоматичне створення createdAt та updatedAt
 );
 
 // model - клас, з допомогою якого створюємо документи

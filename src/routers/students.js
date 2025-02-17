@@ -1,5 +1,4 @@
 //Ruters
-
 import { Router } from 'express'; //для створення об'єкта роутера router
 import {
   getStudentsByIdController, //пошук студента по id
@@ -17,18 +16,33 @@ import {
   updateStudentValidationSchema,
 } from '../validation/students.js'; //схема
 import { validateMongoId } from '../middlewares/validateMongoId.js'; //валідація id
+//authenticate
+import { authenticate } from '../middlewares/authenticate.js';
+//authorization
+import { checkRoles } from '../middlewares/checkRoles.js';
+import { ROLES } from '../constants/role.js';
 
 const studentsRouter = Router();
 
 studentsRouter.use('/:studentId', validateMongoId('studentId')); //відпрацює скрізь де є шлях :studentId
+studentsRouter.use(authenticate); //аунтефікація (без авторизації)
 
 //GET
-studentsRouter.get('/', ctrlWrapper(getStudentsController));
-studentsRouter.get('/:studentId', ctrlWrapper(getStudentsByIdController));
+studentsRouter.get(
+  '/',
+  checkRoles(ROLES.TEACHER),
+  ctrlWrapper(getStudentsController),
+);
+studentsRouter.get(
+  '/:studentId',
+  checkRoles(ROLES.TEACHER, ROLES.PARENT),
+  ctrlWrapper(getStudentsByIdController),
+);
 
 //POST
 studentsRouter.post(
   '/',
+  checkRoles(ROLES.TEACHER),
   validateBody(createStudentValidationSchema), //валідація
   ctrlWrapper(createStudentController),
 );
@@ -36,6 +50,7 @@ studentsRouter.post(
 //PUT - оновлює весь ресурс (має отримати всю інформацію для створення/оновлення)
 studentsRouter.put(
   '/:studentId',
+  checkRoles(ROLES.TEACHER),
   validateBody(createStudentValidationSchema), //валідація
   ctrlWrapper(upsertStudentController),
 );
@@ -43,11 +58,16 @@ studentsRouter.put(
 //PATCH - update
 studentsRouter.patch(
   '/:studentId',
+  checkRoles(ROLES.TEACHER, ROLES.PARENT),
   validateBody(updateStudentValidationSchema),
   ctrlWrapper(patchStudentController),
 );
 
 //DELETE
-studentsRouter.delete('/:studentId', ctrlWrapper(deleteStudentController));
+studentsRouter.delete(
+  '/:studentId',
+  checkRoles(ROLES.TEACHER),
+  ctrlWrapper(deleteStudentController),
+);
 
 export default studentsRouter;

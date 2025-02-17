@@ -1,0 +1,42 @@
+import createHttpError from 'http-errors';
+import { ROLES } from '../constants/role.js';
+import { StudentCollection } from '../db/models/students.js'; //Schema
+
+export const checkRoles =
+  (...roles) =>
+  //[]
+  async (req, res, next) => {
+    const { user } = req;
+    //Якщо користувач відсутній
+    if (!user) {
+      next(createHttpError(401));
+      return;
+    }
+
+    const { role } = user;
+    if (roles.includes(ROLES.TEACHER) && role === ROLES.TEACHER) {
+      next();
+      return;
+    }
+    console.log(`user - ${req.user}, role - ${user.role}`);
+
+    if (roles.includes(ROLES.PARENT) && role === ROLES.PARENT) {
+      const { studentId } = req.params;
+      if (!studentId) {
+        next(createHttpError(403));
+        return;
+      }
+
+      const student = await StudentCollection.findOne({
+        _id: studentId,
+        parentId: user._id,
+      });
+
+      if (student) {
+        next();
+        return;
+      }
+    }
+
+    next(createHttpError(403));
+  };

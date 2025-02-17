@@ -13,6 +13,7 @@ import router from './routers/index.js'; //контролери маршруті
 // Імпортуємо middleware (помилки)
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
+import cookieParser from 'cookie-parser';
 
 //огорне все що відбувалось
 export const startServer = () => {
@@ -24,6 +25,7 @@ export const startServer = () => {
   //  і поміщати його в req.body, при Content-Type: application/json
 
   app.use(cors());
+  app.use(cookieParser());
 
   app.use(
     pino({
