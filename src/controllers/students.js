@@ -54,7 +54,10 @@ export const getStudentsByIdController = async (req, res, next) => {
 
 //POST-create
 export const createStudentController = async (req, res) => {
-  const student = await createStudent(req.body);
+  const student = await createStudent({
+    ...req.body,
+    parentId: req.body.parentId ?? req.user._id,
+  });
   console.log('REQ.QUERY_post:', req.body); //--
   console.log('student_post:', student); //--
 

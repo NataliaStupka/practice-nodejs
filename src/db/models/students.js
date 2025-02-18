@@ -1,7 +1,8 @@
 //схема користувача
 //валідація на базі даних ?
-import { model, Schema } from 'mongoose';
+import { model, Schema, Types } from 'mongoose';
 import { GENDERS } from '../../constants/gender.js';
+import { UserCollection } from './user.js';
 
 const studentSchema = new Schema(
   {
@@ -11,8 +12,8 @@ const studentSchema = new Schema(
     avgMark: { type: Number, required: true },
     onDuty: { type: Boolean, default: false, required: true },
     //
-    parentId: { type: Schema.Types.ObjectId, ref: 'users' },
-    //parentId: { type: Types.ObjectId, ref: UserCollection, required: true },
+    //parentId: { type: Schema.Types.ObjectId, ref: 'users' },
+    parentId: { type: Types.ObjectId, ref: UserCollection, required: true },
   },
   { timestamps: true, versionKey: false }, //timestamps автоматичне створення createdAt та updatedAt
 );

@@ -18,6 +18,7 @@ export const authenticate = async (req, res, next) => {
       return;
     }
 
+    // const [bearer, token] = authHeader.split(' ');
     const bearer = authHeader.split(' ')[0];
     const token = authHeader.split(' ')[1]; //отримуємо токен
     console.log('authHeader.split:', authHeader.split);
@@ -45,6 +46,7 @@ export const authenticate = async (req, res, next) => {
     //Пошук користувача:
     const user = await UserCollection.findById(session.userId);
     if (!user) {
+      await SessionCollection.findByIdAndDelete(session._id); //??
       next(createHttpError(401, 'No user found for such session!'));
       return;
     }

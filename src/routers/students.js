@@ -25,7 +25,7 @@ import { ROLES } from '../constants/role.js';
 const studentsRouter = Router();
 
 studentsRouter.use('/:studentId', validateMongoId('studentId')); //відпрацює скрізь де є шлях :studentId
-studentsRouter.use(authenticate); //аунтефікація (без авторизації)
+studentsRouter.use('/', authenticate); //аунтефікація (без авторизації)
 
 //GET
 studentsRouter.get(

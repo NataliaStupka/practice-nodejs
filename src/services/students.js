@@ -16,7 +16,7 @@ export const getStudents = async ({
 }) => {
   const limit = perPage;
   //кількість контактів, що 'відступаємо' (offset)
-  const skip = (page - 1) * perPage; //(поточна сторінка - 1)*кільк.на сторінці
+  const skip = (page - 1) * perPage; //(поточна сторінка - 1)*кільк.на сторінці //offset
 
   const studentsQuery = StudentCollection.find();
 

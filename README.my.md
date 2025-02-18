@@ -68,6 +68,7 @@
     - middleware checkRoles;
     - src/routers/students.js використовуємо middleware checkRoles:
       - studentsRouter.get - корегуємо
+      - controllers/student post - додаємо parentId (приналежність контакта юзеру)
 
 7.  - teacher мають повний доступ до всіх контактів
     - parent - доступ тільки до свого контакту
