@@ -8,6 +8,24 @@ import { UserCollection } from '../db/models/user.js'; //userSchema
 //session
 import { SessionCollection } from '../db/models/session.js'; //sessionSchema
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants/time-token.js';
+//скид паролю
+import jwt from 'jsonwebtoken'; //для роботи із JWT-токеном
+import Handlebars from 'handlebars'; //шаблон library
+import path from 'node:path'; //шлях
+import fs from 'node:fs';
+//
+import { getEnv } from '../utils/getEnv.js'; //змінна оточення
+import { sendEmail } from '../utils/sendEmail.js'; // надсилання листів
+import { ENV_VARS } from '../constants/env.js'; //const змінна оточення
+import { TEMPLATES_DIR_PATH } from '../constants/path.js'; //шляхи до різних файлів
+
+//для скиду паролю
+//читає файл та повертає його вміст за шляхом path
+const resetEmailTemplate = fs
+  .readFileSync(
+    path.join(TEMPLATES_DIR_PATH, 'reset-password-email.html'), //шаблон html листа
+  )
+  .toString();
 
 //для перевикористання: створення сесії
 const createSession = () => ({
@@ -114,4 +132,71 @@ export const refreshSession = async ({ sessionId, refreshToken }) => {
 export const logoutUser = async (sessionId) => {
   console.log('services-LOGOUT_sessionId:', sessionId);
   await SessionCollection.deleteOne({ _id: sessionId });
+};
+
+//СКИД ПАРОЛЮ
+export const requestResetToken = async (email) => {
+  const user = await UserCollection.findOne({ email });
+  if (!user) {
+    throw createHttpError(404, 'User not found! 🚫');
+  }
+
+  //токен скидання пароля // jwt - для роботи з токеном
+  const token = jwt.sign(
+    { sub: user._id, email },
+    getEnv(ENV_VARS.JWT_SECRET), //для генерації підпису токену
+    {
+      expiresIn: '15m', //термін дії
+    },
+  );
+
+  const resetPasswordLink = `${getEnv(
+    ENV_VARS.FRONTEND_DOMAIN,
+  )}/reset-password?token=${token}`;
+
+  console.log('ResetToken1:', token);
+
+  const template = Handlebars.compile(resetEmailTemplate);
+  const html = template({
+    name: user.name,
+    link: resetPasswordLink,
+  });
+
+  // sendEmail - надсилання листів
+  await sendEmail({
+    from: getEnv(ENV_VARS.SMTP_FROM),
+    to: email,
+    subject: 'Reset your password!',
+    // html: `<p>Click <a href="${token}">here</a> to reset your password!</p>`,
+    html,
+  });
+};
+
+//ВСТАНОВЛЕННЯ НОВОГО ПАРОЛЮ
+export const resetPassword = async (payload) => {
+  let entries;
+  console.log('Payload:', payload);
+  //чи валідний токен, через jwt.verify
+  try {
+    entries = jwt.verify(payload.token, getEnv(ENV_VARS.JWT_SECRET));
+  } catch (err) {
+    if (err instanceof Error) throw createHttpError(401, err.message);
+    throw err;
+  }
+
+  //чи є користувач
+  const user = await UserCollection.findOne({
+    email: entries.email,
+    _id: entries.sub,
+  });
+  if (!user) {
+    throw createHttpError(404, 'User not found! 🚫');
+  }
+  console.log('PAYPASSW:!!', payload.password);
+  //хешуємо пароль
+  const encryptedPassword = await bcrypt.hash(payload.password, 10);
+  //замінюємо на ноий пароль, знаходимо користувача по id
+  await UserCollection.findByIdAndUpdate(user._id, {
+    password: encryptedPassword,
+  });
 };

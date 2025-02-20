@@ -3,6 +3,8 @@ import {
   loginUser,
   logoutUser,
   refreshSession,
+  requestResetToken, //скид пароля
+  resetPassword, //новий пароля
 } from '../services/auth.js'; //створенний користувач
 import { serializeUser } from '../utils/serializeUser.js'; ////схема об'єкту, що повертаємо при response
 
@@ -95,4 +97,26 @@ export const logoutUserController = async (req, res) => {
   res.clearCookie('refreshToken');
 
   res.status(204).send(); // 204 (No Content)
+};
+
+//запит на зміну пароля
+export const requestResetPasswordEmailController = async (req, res) => {
+  await requestResetToken(req.body.email); //requestResetPasswordEmail
+
+  res.json({
+    message: 'Reset password email was successfully sent! 💌',
+    status: 200,
+    data: {},
+  });
+};
+
+//зміна паролю
+export const resetPasswordController = async (req, res) => {
+  console.log('///:', req.body);
+  await resetPassword(req.body);
+  res.json({
+    message: 'Password was successfully reset! 👍',
+    status: 200,
+    data: {},
+  });
 };

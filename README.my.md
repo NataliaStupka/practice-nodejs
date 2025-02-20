@@ -1,6 +1,43 @@
+<!-- 6 module -->
+
+    <!-- 6 email-and-images ==========================================-->
+
+Для роботи з поштою протоколи(альтернативи для HTTP).
+Найпоширенішими: SMTP(з одного сервера на інший в мережі Інтернет) та POP3(з поштового сервера на локальний комп'ютер користувача.).
+під час передачі даних може використовуватись шифрування TLS або SSL. (аналог HTTPS для HTTP).
+
+    🟠 Бібліотека **nodemailer** - функціонал надсилання листів.
+    npm install nodemailer
+    🟠 бібліотека для роботи із JWT - jsonwebtoken (npm i jsonwebtoken)
+
+1.  скидання паролю: ивкористовуємо jwt-токен
+    JWT (JSON Web Token) складається з трьох частин: Header(тип токена, алгоритм шифрування), Payload(корисна інформація) та Signature.
+    header.payload.signature
+
+    ✅ Shema (validation/auth) - services/auth - controllers/auth - routers/auth; const, env, utils/sendMail.js
+
+    - нові константи та env змінні;
+    - Функціонал надсилання листів в окрему функцію utils/sendMail.js
+    - ендпоінту для надсилання листа з посиланням на скид пароля(routers/auth):
+      - POST /auth/request-reset-email
+      - POST /reset-password
+
+    🟠 https://app.brevo.com/ - сайт створення емейлу для відсилання листа (розділ: SMTP & API, Senders, Domains & Dedicated IPs)
+
+2.  **handlebars** Шаблонізатор для створення листів https://handlebarsjs.com/
+    🟠 npm i handlebars
+
+    - src/templates/reset-password-email.html
+
+3.  зміна паролю - встановлення нового паролю використовуючи токен, що приходить користувачу на пошту:
+    - src/validation/auth.js
+    - src/services/auth.js
+    - src/controllers/auth.js
+    - src/routers/auth.js
+
 <!-- 5 module -->
 
-    <!-- 5 module-auth ==========================================-->
+            <!-- 5 module-auth ==========================================-->
 
 Аутентифікація в нашому додатку побудована на основі сесій
 

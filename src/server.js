@@ -15,6 +15,9 @@ import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import cookieParser from 'cookie-parser';
 
+// // // ‼️ ВИДАЛИТИ ПЕРЕД ДЕПЛОЄМ!! локально вимикає додаткові перевірки (для видправки листа при reset password) без цього видправляє але не доходить
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 //огорне все що відбувалось
 export const startServer = () => {
   const app = express(); //Ініціалізувати Express-додаток
