@@ -41,7 +41,7 @@ export const getStudentsByIdController = async (req, res, next) => {
 
   const student = await getStudentById(studentId);
   if (!student) {
-    throw createHttpError(404, 'Student not found'); //передаємо код помилки, рядок-опис
+    throw createHttpError(404, 'Student not found 🤷‍♂️'); //передаємо код помилки, рядок-опис
   }
 
   res.json({
