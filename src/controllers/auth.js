@@ -4,13 +4,14 @@ import {
   logoutUser,
   refreshSession,
 } from '../services/auth.js'; //створенний користувач
-import { serializeUser } from '../utils/serializeUser.js'; ////схема об'єкту, що повертаємо при response
+import { serializeUser } from '../utils/serializeUser.js'; ////схема об'єкту, що повертаємо при response.json
 
-import { REFRESH_TOKEN } from '../constants/time-token.js';
+import { REFRESH_TOKEN } from '../constants/time-token.js'; //30 days
 
 //налаштування cookies
 const setupSessionCookies = (session, res) => {
   console.log('SESSION-auth-Controller:', session);
+
   //cookie(name, value, options)
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true, //доступний тільки через HTTP-запити
@@ -43,8 +44,7 @@ export const loginUserController = async (req, res) => {
   const session = await loginUser(req.body); // req.body - email, password
   console.log('SESSION', session);
 
-  //налаштування cookies
-  setupSessionCookies(session, res);
+  setupSessionCookies(session, res); //налаштування cookies
   console.log(`Controllers-auth_setupSessionCookies_ RES: ${res})`);
 
   res.status(200).json({
@@ -68,8 +68,7 @@ export const refreshSessionController = async (req, res) => {
   });
   console.log('Controller-auth_session', session);
 
-  //налаштування cookies
-  setupSessionCookies(session, res);
+  setupSessionCookies(session, res); //налаштування cookies
 
   //повертаємо response з новим token
   res.status(200).json({

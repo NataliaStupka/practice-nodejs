@@ -24,13 +24,13 @@ import { ROLES } from '../constants/role.js';
 
 const studentsRouter = Router();
 
-studentsRouter.use('/:studentId', validateMongoId('studentId')); //відпрацює скрізь де є шлях :studentId
 studentsRouter.use('/', authenticate); //аунтефікація (без авторизації)
+studentsRouter.use('/:studentId', validateMongoId('studentId')); //відпрацює скрізь де є шлях :studentId
 
 //GET
 studentsRouter.get(
   '/',
-  checkRoles(ROLES.TEACHER),
+  checkRoles(ROLES.TEACHER, ROLES.PARENT), //ROLES.PARENT - delete!!
   ctrlWrapper(getStudentsController),
 );
 studentsRouter.get(
@@ -42,25 +42,25 @@ studentsRouter.get(
 //POST
 studentsRouter.post(
   '/',
-  checkRoles(ROLES.TEACHER),
+  checkRoles(ROLES.TEACHER, ROLES.PARENT),
   validateBody(createStudentValidationSchema), //валідація
   ctrlWrapper(createStudentController),
-);
-
-//PUT - оновлює весь ресурс (має отримати всю інформацію для створення/оновлення)
-studentsRouter.put(
-  '/:studentId',
-  checkRoles(ROLES.TEACHER),
-  validateBody(createStudentValidationSchema), //валідація
-  ctrlWrapper(upsertStudentController),
 );
 
 //PATCH - update
 studentsRouter.patch(
   '/:studentId',
-  checkRoles(ROLES.TEACHER, ROLES.PARENT),
+  checkRoles(ROLES.PARENT),
   validateBody(updateStudentValidationSchema),
   ctrlWrapper(patchStudentController),
+);
+
+//PUT - оновлює весь ресурс (має отримати всю інформацію для створення/оновлення)
+studentsRouter.put(
+  '/:studentId',
+  checkRoles(ROLES.TEACHER, ROLES.PARENT),
+  validateBody(createStudentValidationSchema), //валідація
+  ctrlWrapper(upsertStudentController),
 );
 
 //DELETE

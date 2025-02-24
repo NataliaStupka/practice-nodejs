@@ -7,36 +7,36 @@ export const checkRoles =
   //[]
   async (req, res, next) => {
     const { user } = req;
-    //Якщо користувач відсутній
-    if (!user) {
-      next(createHttpError(401));
-      return;
-    }
-
-    const { role } = user;
-    if (roles.includes(ROLES.TEACHER) && role === ROLES.TEACHER) {
-      next();
-      return;
-    }
-    console.log(`user - ${req.user}, role - ${user.role}`);
-
-    if (roles.includes(ROLES.PARENT) && role === ROLES.PARENT) {
-      const { studentId } = req.params;
-      if (!studentId) {
-        next(createHttpError(403));
+    try {
+      //Якщо користувач відсутній
+      if (!user) {
+        next(createHttpError(401, 'User not found'));
         return;
       }
 
-      const student = await StudentCollection.findOne({
-        _id: studentId,
-        parentId: user._id,
-      });
-
-      if (student) {
-        next();
-        return;
+      const { role } = user;
+      console.log(`------role: '${role}' with '${roles}'`);
+      //якщо teacher - йдемо далі
+      if (roles.includes(ROLES.TEACHER) && role === ROLES.TEACHER) {
+        return next();
       }
-    }
+      console.log(`user - ${req.user}, role - ${user.role}`);
+      //якщо parents
+      if (roles.includes(ROLES.PARENT) && role === ROLES.PARENT) {
+        const { studentId } = req.params;
 
-    next(createHttpError(403));
+        if (!studentId) {
+          return next();
+        }
+        //Пошук студента в базі даних за його ідентифікатором
+        const student = await StudentCollection.findOne({ _id: studentId });
+        //Перевірка батьківства, порівнюються ідентифікатор користувача (req.user._id) і parentId студента
+        if (req.user._id.equals(student.parentId)) {
+          return next();
+        }
+      }
+      return next(createHttpError(403, 'Such action in unauthorized'));
+    } catch (err) {
+      next(err);
+    }
   };

@@ -10,7 +10,7 @@ import { UserCollection } from '../db/models/user.js';
 export const authenticate = async (req, res, next) => {
   const authHeader = req.get('Authorization'); //отримує заголовок авторизації
   console.log(`req - ${req}, authHeader - ${authHeader}`);
-
+  // console.log('??!?!?--------', req);
   try {
     //Перевірка заголовка авторизації
     if (!authHeader) {
@@ -35,6 +35,7 @@ export const authenticate = async (req, res, next) => {
     const session = await SessionCollection.findOne({
       accessToken: token,
     });
+    console.log('???SESION+:', session);
     if (!session) {
       //якщо немає session
       throw new createHttpError(401, 'No active session found! 🚫');

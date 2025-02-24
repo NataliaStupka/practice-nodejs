@@ -63,6 +63,9 @@ export const getStudents = async ({
 //GET-by_id
 export const getStudentById = async (studentId) => {
   const student = await StudentCollection.findById(studentId);
+  //  if (!student) {
+  //    throw new createHttpError(404, 'Student not found');
+  //  }
   return student;
 };
 

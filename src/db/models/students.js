@@ -12,7 +12,6 @@ const studentSchema = new Schema(
     avgMark: { type: Number, required: true },
     onDuty: { type: Boolean, default: false, required: true },
     //
-    //parentId: { type: Schema.Types.ObjectId, ref: 'users' },
     parentId: { type: Types.ObjectId, ref: UserCollection, required: true },
   },
   { timestamps: true, versionKey: false }, //timestamps автоматичне створення createdAt та updatedAt
@@ -20,6 +19,7 @@ const studentSchema = new Schema(
 
 // model - клас, з допомогою якого створюємо документи
 export const StudentCollection = model('students', studentSchema);
+
 // model(ім'я колекції, схема);
 // createdAt (дата створення)
 // updatedAt (дата оновлення)
