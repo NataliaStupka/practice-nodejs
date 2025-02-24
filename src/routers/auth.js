@@ -47,7 +47,7 @@ authRouter.post(
 //встановлення нового паролю
 authRouter.post(
   '/reset-password',
-  validateBody(resetPasswordValidationSchema),
+  validateBody(resetPasswordValidationSchema), //потрібен password, token
   ctrlWrapper(resetPasswordController),
 );
 

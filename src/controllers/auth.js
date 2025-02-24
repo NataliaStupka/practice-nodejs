@@ -3,7 +3,7 @@ import {
   loginUser,
   logoutUser,
   refreshSession,
-  requestResetToken, //скид пароля
+  requestResetToken, //надсилання листа на зміну паролю
   resetPassword, //новий пароля
 } from '../services/auth.js'; //створенний користувач
 import { serializeUser } from '../utils/serializeUser.js'; ////схема об'єкту, що повертаємо при response

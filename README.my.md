@@ -10,7 +10,7 @@
     npm install nodemailer
     🟠 бібліотека для роботи із JWT - jsonwebtoken (npm i jsonwebtoken)
 
-1.  скидання паролю: ивкористовуємо jwt-токен
+1.  скидання паролю: використовуємо jwt-токен
     JWT (JSON Web Token) складається з трьох частин: Header(тип токена, алгоритм шифрування), Payload(корисна інформація) та Signature.
     header.payload.signature
 
@@ -22,7 +22,7 @@
       - POST /auth/request-reset-email
       - POST /reset-password
 
-    🟠 https://app.brevo.com/ - сайт створення емейлу для відсилання листа (розділ: SMTP & API, Senders, Domains & Dedicated IPs)
+    🟡 https://app.brevo.com/ - сайт створення емейлу для відсилання листа (розділ: SMTP & API, Senders, Domains & Dedicated IPs)
 
 2.  **handlebars** Шаблонізатор для створення листів https://handlebarsjs.com/
     🟠 npm i handlebars
@@ -30,14 +30,16 @@
     - src/templates/reset-password-email.html
 
 3.  зміна паролю - встановлення нового паролю використовуючи токен, що приходить користувачу на пошту:
-    - src/validation/auth.js
+
+    - src/validation/resetPasswordValidationSchema.js
     - src/services/auth.js
     - src/controllers/auth.js
     - src/routers/auth.js
 
-<!-- 5 module -->
+4.  Завантаження фото
+    <!-- 5 module -->
 
-            <!-- 5 module-auth ==========================================-->
+                <!-- 5 module-auth ==========================================-->
 
 Аутентифікація в нашому додатку побудована на основі сесій
 

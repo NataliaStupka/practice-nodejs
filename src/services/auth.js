@@ -10,7 +10,7 @@ import { SessionCollection } from '../db/models/session.js'; //sessionSchema
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants/time-token.js';
 //скид паролю
 import jwt from 'jsonwebtoken'; //для роботи із JWT-токеном
-import Handlebars from 'handlebars'; //шаблон library
+import Handlebars from 'handlebars'; //шаблон - library
 import path from 'node:path'; //шлях
 import fs from 'node:fs';
 //
@@ -143,19 +143,19 @@ export const requestResetToken = async (email) => {
 
   //токен скидання пароля // jwt - для роботи з токеном
   const token = jwt.sign(
-    { sub: user._id, email },
+    { sub: user._id, email }, //для кого генеруємо токен
     getEnv(ENV_VARS.JWT_SECRET), //для генерації підпису токену
     {
       expiresIn: '15m', //термін дії
     },
   );
 
+  //шлях - посилання/назва?токен
   const resetPasswordLink = `${getEnv(
     ENV_VARS.FRONTEND_DOMAIN,
   )}/reset-password?token=${token}`;
 
-  console.log('ResetToken1:', token);
-
+  //шаблон
   const template = Handlebars.compile(resetEmailTemplate);
   const html = template({
     name: user.name,
@@ -184,7 +184,7 @@ export const resetPassword = async (payload) => {
     throw err;
   }
 
-  //чи є користувач
+  //чи є користувач //????findById
   const user = await UserCollection.findOne({
     email: entries.email,
     _id: entries.sub,
