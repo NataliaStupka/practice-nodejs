@@ -14,6 +14,7 @@ import router from './routers/index.js'; //контролери маршруті
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import cookieParser from 'cookie-parser';
+import { UPLOADS_DIR_PATH } from './constants/path.js';
 
 // // // ‼️ ВИДАЛИТИ ПЕРЕД ДЕПЛОЄМ!! локально вимикає додаткові перевірки (для відправки листа при reset password) без цього відправляє але не доходить
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -29,6 +30,9 @@ export const startServer = () => {
 
   app.use(cors());
   app.use(cookieParser());
+
+  //зберігання картинки на сервері (роздавати статичні файли)
+  app.use('/uploads', express.static(UPLOADS_DIR_PATH));
 
   app.use(
     pino({

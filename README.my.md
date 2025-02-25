@@ -41,13 +41,46 @@
 4.  Завантаження фото/file
     Приходить запит - зберігається в тимчасовій папці temp - потім зберігається або локально або на хмарі
 
-    - **multer** - робота з картинками. Два основні параметри: destination (в яку директорію будуть зберігатися завантажені файли) і filename.
-    - 🟠 npm i multer
-    - form-data в postman
+         - **multer** - робота з картинками. Два основні параметри: destination (в яку директорію будуть зберігатися завантажені файли) і filename.
+        - 🟠 npm i multer
+         - form-data в postman
 
-<!-- 5 module -->
+         - ✅ constant/env(змінні оточ) + ✅env, ✅env.example; ✅constant/path(шляхи)
+         - src/middlewares/multer.js (upload) - ?? покладемо його в route/PATCH
 
-    <!-- 5 module-auth ========================================-->
+         - ✅ cтворити дві папки(temp, uploads) з файлом-пустишкой .gitkeep, вручну або черезе функцію utils/createDirIfNotExist.js яка перевіряє чи існує файл, як ні то створює його - ✅ використаємо у src/index.js: ↓
+        - ✅ src/routers/students.js. Використовуємо .single. (Ще є: .array, .fields, .any())
+            upload.single('photo')
+        - Отримаємо обʼєкт зображення в тілі контролеру:
+         src/controllers/students.js - ✅ const photo = req.file;
+
+5.  Збереження і роздача зображень:
+
+    - // src/server.js - можливість роздавати статичні файли:
+      ✅ app.use('/uploads', express.static(UPLOAD_DIR));
+
+    - зміни у монгус схему studentsSchema - // src/db/models/student.js
+      додаємо поле ✅ photo
+    - створюємо функцію saveFileToUploadDir - зберігати зображення в постійну папку, видаляти з тимчасової:
+    - ✅ saveFileToUploadDir.js - зберіг.зображ в постійну папку, видалення з тимчасової. - ✅ використаємо в // src/controllers/students.js
+
+    - 🟠 npm install cloudinary
+    - saveFileToCloudinary
+
+    - -- Feature flag ---
+      // src/controllers/students.js
+      ////////
+      if (strategy === 'cloudinary') {
+      photoUrl = await saveFileToCloudinary(photo);
+      }
+      if (strategy === 'local') {
+      photoUrl = await saveFileToUploadDir(photo);
+      }
+      /////////
+
+    <!-- 5 module -->
+
+               <!-- 5 module-auth ========================================-->
 
 Аутентифікація в нашому додатку побудована на основі сесій
 
