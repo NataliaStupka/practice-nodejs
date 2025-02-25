@@ -14,6 +14,11 @@ import { parsePaginationParams } from '../utils/parsePaginationParams.js'; //pag
 import { parseSortParams } from '../utils/parseSortParams.js';
 //filter
 import { parseFilters } from '../utils/parseFilterParams.js';
+//зберігання фото
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinar.js';
+import { getEnv } from '../utils/getEnv.js';
+import { ENV_VARS } from '../constants/env.js';
 
 //GET_all
 export const getStudentsController = async (req, res) => {
@@ -71,8 +76,28 @@ export const createStudentController = async (req, res) => {
 //PATCH
 export const patchStudentController = async (req, res, next) => {
   const { studentId } = req.params;
+  const photo = req.file; ////fieldname, path, originalname, filename, ...
+  console.log('PHOT----', photo);
+  console.log('================---', req.file);
+  let photoUrl;
 
-  const result = await updataStudent(studentId, req.body, { upsert: false });
+  //якщо прийшло фото - передали його у функцію, що збереже в локал папці
+  const strategy = getEnv(ENV_VARS.SAVE_FILE_STRATEGY);
+  if (photo) {
+    if (strategy === 'cloudinary') {
+      photoUrl = await saveFileToCloudinary(photo);
+    }
+    if (strategy === 'local') {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+  console.log('photoUrl -----', photoUrl);
+
+  const result = await updataStudent(
+    studentId,
+    { ...req.body, photo: photoUrl },
+    { upsert: false }, //??
+  );
   console.log(
     `Patch-CONTROLLER_ req.params: ${req.params}, req.body: ${req.body}, result - ${result}`,
   );

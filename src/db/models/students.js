@@ -13,6 +13,7 @@ const studentSchema = new Schema(
     onDuty: { type: Boolean, default: false, required: true },
     //
     parentId: { type: Types.ObjectId, ref: UserCollection, required: true },
+    photo: { type: String, default: null, required: false }, //додавання зображання
   },
   { timestamps: true, versionKey: false }, //timestamps автоматичне створення createdAt та updatedAt
 );

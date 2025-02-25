@@ -21,6 +21,7 @@ import { authenticate } from '../middlewares/authenticate.js';
 //authorization
 import { checkRoles } from '../middlewares/checkRoles.js';
 import { ROLES } from '../constants/role.js';
+import { upload } from '../middlewares/multer.js'; //images
 
 const studentsRouter = Router();
 
@@ -43,6 +44,7 @@ studentsRouter.get(
 studentsRouter.post(
   '/',
   checkRoles(ROLES.TEACHER, ROLES.PARENT),
+  upload.single('photo'), //завантажування фото //single - чекає лише один файл
   validateBody(createStudentValidationSchema), //валідація
   ctrlWrapper(createStudentController),
 );
@@ -50,7 +52,8 @@ studentsRouter.post(
 //PATCH - update
 studentsRouter.patch(
   '/:studentId',
-  checkRoles(ROLES.PARENT),
+  checkRoles(ROLES.PARENT, ROLES.TEACHER),
+  upload.single('photo'), //завантажування фото
   validateBody(updateStudentValidationSchema),
   ctrlWrapper(patchStudentController),
 );
@@ -59,6 +62,7 @@ studentsRouter.patch(
 studentsRouter.put(
   '/:studentId',
   checkRoles(ROLES.TEACHER, ROLES.PARENT),
+  upload.single('photo'), //завантажування фото
   validateBody(createStudentValidationSchema), //валідація
   ctrlWrapper(upsertStudentController),
 );
