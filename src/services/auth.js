@@ -19,6 +19,11 @@ import { sendEmail } from '../utils/sendEmail.js'; // надсилання ли�
 import { ENV_VARS } from '../constants/env.js'; //const змінна оточення
 import { TEMPLATES_DIR_PATH } from '../constants/path.js'; //шляхи до різних файлів
 
+import {
+  getFullNameFromGoogleTokenPayload,
+  validateCode,
+} from '../utils/googleOAuth2.js'; //авторизації через Google
+
 //для скиду паролю
 //читає файл та повертає його вміст за шляхом path
 const resetEmailTemplate = fs
@@ -198,5 +203,35 @@ export const resetPassword = async (payload) => {
   //замінюємо на ноий пароль, знаходимо користувача по id
   await UserCollection.findByIdAndUpdate(user._id, {
     password: encryptedPassword,
+  });
+};
+
+//авторизації(є user - заходимо, не має - створюємо) через Google
+export const loginOrSignupWithGoogle = async (code) => {
+  const loginTicket = await validateCode(code); //повертає ticket (з ним можна дістати закодовані дані).
+  const payload = loginTicket.getPayload(); // отримання інформації про користувача
+  if (!payload) {
+    throw createHttpError(401);
+  }
+
+  console.log('--- PAYload_serv-auth', payload);
+
+  let user = await UserCollection.findOne({ email: payload.email });
+  //якщо не має - створюємо
+  if (!user) {
+    const password = await bcrypt.hash(randomBytes(10), 10);
+    user = await UserCollection.create({
+      email: payload.email,
+      name: getFullNameFromGoogleTokenPayload(payload),
+      password,
+      role: 'parent',
+    });
+  }
+
+  const newSession = createSession();
+
+  return await SessionCollection.create({
+    userId: user._id,
+    ...newSession,
   });
 };

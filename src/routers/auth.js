@@ -10,11 +10,15 @@ import {
   logoutUserController,
   requestResetPasswordEmailController,
   resetPasswordController, //скидання пароля
+  getGoogleOAuthUrlController,
+  loginWithGoogleController, //авторизації через Google
 } from '../controllers/auth.js'; //res.status(201).json();
 import { loginUserValidationSchema } from '../validation/loginUserValidation.js';
 //скид паролю
 import { requestResetEmailSchema } from '../validation/requestResetPasswordEmailValidationSchema.js'; //скидання пароля: валідація email
 import { resetPasswordValidationSchema } from '../validation/resetPasswordValidationSchema.js'; //встановлення нового паролю: валідація password, token
+
+import { loginWithGoogleOAuthSchema } from '../validation/verifyGoogleOAuthCodeValidationSchema.js';
 
 const authRouter = Router();
 
@@ -51,4 +55,11 @@ authRouter.post(
   ctrlWrapper(resetPasswordController),
 );
 
+//авторизації через Google
+authRouter.get('/get-oauth-url', ctrlWrapper(getGoogleOAuthUrlController));
+authRouter.post(
+  '/confirm-oauth',
+  validateBody(loginWithGoogleOAuthSchema),
+  ctrlWrapper(loginWithGoogleController),
+);
 export default authRouter;
